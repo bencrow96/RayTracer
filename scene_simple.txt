@@ -1,0 +1,33 @@
+% prawoskretny uklad wspolrzednych
+
+% liczba pikseli w poziomie
+cam_width 1000
+
+% liczba pikseli w pionie
+cam_height 800
+
+% kat widzenia kamery 
+cam_FOV 50
+
+% polozenie kamery
+cam_eyep 0 0 -10
+
+% punkt na ktory patrzy kamera
+cam_lookp 0 0 0 
+
+% wektor wskazujacy polozenie gory obrazu
+cam_up 0 1 0 
+
+% sphere promien srodek_x srodek_y srodek_z reflect amb_r amb_g amb_b diff_r diff_b diff_b spec_r spec_g spec_b shininess
+sphere 2 0 0 0  0  0.01 0.01 0.01   0.8 0.01 0.01   0.8 0.8 0.8 20
+sphere 1 2 2 0  0  0.01 0.01 0.01   0.01 0.8 0.01   0.01 0.01 0.01 20
+
+% triangle p0x p0y p0z p1x p1y p1z p2x p2y p2z
+
+% light pos_x pos_y pos_z amb_r amb_g amb_b diff_r diff_b diff_b spec_r spec_g spec_b
+light -4 4 -2    1 1 1   1 1 1  1 1 1
+light 1 1 -10   1 1 1   1 1 1  1 1 1
+
+
+
+
