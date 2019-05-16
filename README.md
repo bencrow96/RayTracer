@@ -1,2 +1,2 @@
 # RayTracer
-C++ raytracer project, generating static scenes
+C++ raytracer project, rendering static scenes
