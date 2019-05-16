@@ -1,5 +1,4 @@
-﻿  pch.cpp
-  RayTracer.cpp
+﻿  RayTracer.cpp
 d:\raytracer\raytracer\classes\cimage.h(19): warning C4244: "=": konwersja z "T" do "BYTE", możliwa utrata danych
           with
           [
@@ -75,17 +74,17 @@ d:\raytracer\raytracer\classes\cscene.h(155): warning C4244: "inicjowanie": konw
 d:\raytracer\raytracer\classes\cscene.h(156): warning C4244: "inicjowanie": konwersja z "double" do "float", możliwa utrata danych
 d:\raytracer\raytracer\classes\cscene.h(157): warning C4244: "inicjowanie": konwersja z "double" do "float", możliwa utrata danych
 d:\raytracer\raytracer\classes\craytrace.h(20): warning C4244: "inicjowanie": konwersja z "double" do "float", możliwa utrata danych
+d:\raytracer\raytracer\classes\craytrace.h(113): warning C4244: "=": konwersja z "double" do "T", możliwa utrata danych
+          with
+          [
+              T=float
+          ]
+d:\raytracer\raytracer\classes\craytrace.h(114): warning C4244: "=": konwersja z "double" do "T", możliwa utrata danych
+          with
+          [
+              T=float
+          ]
 d:\raytracer\raytracer\classes\craytrace.h(115): warning C4244: "=": konwersja z "double" do "T", możliwa utrata danych
-          with
-          [
-              T=float
-          ]
-d:\raytracer\raytracer\classes\craytrace.h(116): warning C4244: "=": konwersja z "double" do "T", możliwa utrata danych
-          with
-          [
-              T=float
-          ]
-d:\raytracer\raytracer\classes\craytrace.h(117): warning C4244: "=": konwersja z "double" do "T", możliwa utrata danych
           with
           [
               T=float
