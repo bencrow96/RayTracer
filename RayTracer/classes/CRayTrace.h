@@ -29,7 +29,7 @@ public:
 				primaryRay->dir = normalize(mat3(u, v, o) * vec3(x, y, 1));
 				primaryRay->t = -1;
 
-				rayTrace(primaryRay, output);
+				rayTrace(primaryRay, output); 
 
 				scene->image->set(x, y, output->color * 255.0f);
 			}
@@ -42,11 +42,9 @@ public:
 		float minT = INFINITY;
 		int index = 0;
 		for (int i = 0; i < scene->objCount; i++) {
-			if (scene->obj[i]->intersect(ray)) {
-				if (ray->t > 0.01 && ray->t < minT) {
-					minT = ray->t;
-					index = i;
-				}
+			if (scene->obj[i]->intersect(ray) && ray->t < minT && ray->t > 0.001) {
+				minT = ray->t;
+				index = i;
 			}
 		}
 		if (minT < INFINITY) {
@@ -57,7 +55,7 @@ public:
 	}
 	bool shadow(CRay *ray) { // check if ray intersects with anything
 		for (int i = 0; i < scene->objCount; i++) {
-			if (scene->obj[i]->intersect(ray) && ray->t > 0.001)  return true; //ray->t > 0.001 lets avoid hit surface that was just collided
+			if (scene->obj[i]->intersect(ray) && ray->t > 1.5)  return true;
 		}
 		return false;
 	}
