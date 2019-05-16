@@ -22,7 +22,7 @@ int main()
 	CRayTrace *RayTrace = new CRayTrace;
 	int err = RayTrace->scene->parse("../scene_trian.txt");
 	if (!err) {
-		RayTrace->rayTrace();
+		RayTrace->init();
 		RayTrace->scene->image->save("../result.png");
 	}
 

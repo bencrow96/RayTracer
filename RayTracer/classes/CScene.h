@@ -1,21 +1,18 @@
-/** Klasa opisujaca scene, definicje kamery, zrodel swiatla, obiektow, itp.
+/** Scene class
  */
 class CScene {
 public:
 	CImage *image;
-	CCamera cam; /**< kamera */
+	CCamera cam;
 
-	CObject* obj[200]; /**< lista z definicjami obiektow */
-	int objCount; /**< liczba obiektow na liscie */
+	CObject* obj[200]; /**< list of objects */
+	int objCount = 0;
 
-	CLight* lights[10];
-	int lightCount;
+	CLight* lights[10]; /**< list of lights */
+	int lightCount = 0;
 
-	CScene() {
-	}
-
-	/** Parsowanie pliku tektowego z informacjami o scenie.
-	 *	@param - nazwa pliku
+	/** Parsing text file into scene
+	 *	@param - file name
 	 */
 	vector<string> split(string str, string token) {
 		vector<string>result;

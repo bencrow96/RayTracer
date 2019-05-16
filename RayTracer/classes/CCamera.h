@@ -1,11 +1,11 @@
-/** Klasa opisujaca parametry kamery
+/** Camera class
  */
 class CCamera {
 public:
-	vec3 pos; // pozycja poczatkowa
-	vec3 target; // kierunek patrzenia
-	vec3 up; // gora obrazu
-	int width; // szerokosc
-	int height; // wysokosc
+	vec3 pos; // camera position
+	vec3 target; // camera direction
+	vec3 up; // up of camera
+	int width;
+	int height;
 	int fov; // FOV
 };

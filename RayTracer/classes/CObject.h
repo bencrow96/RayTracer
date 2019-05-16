@@ -1,14 +1,14 @@
-/** Typy obiektow
+/** Types of objects
  */
 #define OBJ_SPHERE 0
 #define OBJ_TRIANGLE 1
 #define OBJ_PLANE 2
 
-/** Wirtualna klasa definuj¹ca obiekt
+/** Virtual class defines object
  */
 class CObject {
 public:
-	int type; /**< rodzaj obiektu (OBJ_SPHERE, OBJ_TRIANGLE) */
+	int type; /**< object type (OBJ_SPHERE, OBJ_TRIANGLE) */
 	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
@@ -18,23 +18,23 @@ public:
 	CObject() {
 	}
 
-	/** Obliczenie przeciêcia promienia z obiektem */
+	/** intersect computing */
 	virtual float intersect(CRay* ray) {
 		return -1;
 	}
-
+	/** normal vector computing */
 	virtual vec3 normal(CRay *ray) {
 		return vec3(NULL);
 	}
 
 };
 
-/** Klasa opisujaca obiekt - kula
+/** Sphere class
  */
 class CSphere : public CObject {
 public:
-	float r; /**< promien */
-	vec3 o; /**< polozenie srodka */
+	float r; /**< radius */
+	vec3 o; /**< center point position */
 
 	CSphere(float sR, vec3 sO, float sReflecting, vec3 sAmbient, vec3 sDiffuse, vec3 sSpecular, float sShine) {
 		type = OBJ_SPHERE;
@@ -47,7 +47,7 @@ public:
 		shine = sShine;
 	}
 
-	/** Obliczenie przeciêcia promienia z kula */
+	/** Sphere intersection computing */
 	float intersect(CRay* ray) {
 		float a, b, c, delta, x0, x1, x2;
 		vec3 v = ray->pos - o;
@@ -75,13 +75,13 @@ public:
 			return 0;
 		}
 	}
-
-	vec3 normal(CRay *ray) { // returns normal vec
+	// returns normal vector of Sphere
+	vec3 normal(CRay *ray) { 
 		return normalize((ray->pos + ray->t * ray->dir) - o);
 	}
 };
 
-/** Klasa opisujaca obiekt - triangle
+/** Triangle class
  */
 class CTriangle : public CObject {
 public:
@@ -101,7 +101,7 @@ public:
 		shine = tShine;
 	}
 
-	/** Obliczenie przeciêcia promienia z trojkatem */
+	/** Triangle intersection computing */
 	float intersect(CRay* ray) {
 		vec3 n = normal(ray);
 		float d = -dot(n, p0);
@@ -128,6 +128,7 @@ public:
 		}
 		return 0;
 	}
+	// returns normal vector of triangle
 	vec3 normal(CRay *ray) {
 		vec3 u = p1 - p0;
 		vec3 v = p2 - p0;
@@ -139,11 +140,11 @@ public:
 	}
 };
 
-/** Definicja zrodla swiatla
+/** Light source definition
  */
 class CLight {
 public:
-	vec3 pos; // pozycja
+	vec3 pos;
 	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;

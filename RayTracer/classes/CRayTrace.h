@@ -1,22 +1,41 @@
-/** Glowna klasa ray tracera
+/** Raytracer main class
  */
 class CRayTrace {
 private:
-	COutput *output;
-	CRay *primaryRay; // promien pierwotny
-	CRay *shadowRay; // promien cienia
+	CRay *primaryRay;
 public:
+	COutput *output;
 	CScene *scene;
 
-	/** Glowna petla ray tracera
+	/** Main loop
 	 */
 	CRayTrace() {
 		scene = new CScene;
 		output = new COutput;
 		primaryRay = new CRay;
-		shadowRay = new CRay;
+	}
 
-		rayTrace();
+	int init() {
+		vec3 look, u, v, o;
+		float radian = scene->cam.fov * 3.1416 / 180;
+		look = scene->cam.target - scene->cam.pos;
+		u = normalize(cross(scene->cam.up, look));
+		v = normalize(cross(look, u));
+		o = normalize(look) * (scene->cam.width / (2 * tan(radian / 2))) - (float)(scene->cam.width / 2) * u - (float)(scene->cam.height / 2) * v;
+
+		for (int y = 0; y < scene->cam.height; y++) {
+			for (int x = 0; x < scene->cam.width; x++) {
+				primaryRay->pos = scene->cam.pos;
+				primaryRay->dir = normalize(mat3(u, v, o) * vec3(x, y, 1));
+				primaryRay->t = -1;
+
+				rayTrace(primaryRay, output);
+
+				scene->image->set(x, y, output->color * 255.0f);
+			}
+		}
+
+		return 0;
 	}
 
 	int closest(CRay *ray) { // choose an intersected object by minimal positive t
@@ -36,95 +55,69 @@ public:
 		}
 		else return -1;
 	}
-	int shadow(CRay *ray) { // check if ray intersects with anything
+	bool shadow(CRay *ray) { // check if ray intersects with anything
 		for (int i = 0; i < scene->objCount; i++) {
-			if (scene->obj[i]->intersect(ray) && ray->t > 0.001)  return 1;
+			if (scene->obj[i]->intersect(ray) && ray->t > 0.001)  return true; //ray->t > 0.001 lets avoid hit surface that was just collided
 		}
-		return 0;
+		return false;
 	}
 
-	/** Sledzenie promienia
+	/** Sending ray
 	*/
-	int rayTrace() {
-		vec3 look, u, v, o;
-		float radian = scene->cam.fov * 3.1416 / 180;
-		look = scene->cam.target - scene->cam.pos;
-		u = normalize(cross(scene->cam.up, look));
-		v = normalize(cross(look, u));
-		o = normalize(look) * (scene->cam.width / (2 * tan(radian / 2))) - (float)(scene->cam.width / 2) * u - (float)(scene->cam.height / 2) * v;
+	int rayTrace(CRay *ray, COutput *output) {
+		CRay *shadowRay = new CRay;
 
-		for (int y = 0; y < scene->cam.height; y++) {
-			for (int x = 0; x < scene->cam.width; x++) {
-				primaryRay->pos = scene->cam.pos;
-				primaryRay->dir = normalize(mat3(u, v, o) * vec3(x, y, 1));
-				primaryRay->t = -1;
+		int index = closest(primaryRay);
+		if (index > -1) { // when intersected
+			// blinn - phong model
+			shadowRay->pos = primaryRay->pos + primaryRay->t * primaryRay->dir;
+			shadowRay->t = -1;
+			vec3 a = vec3(0, 0, 0);
+			vec3 d = vec3(0, 0, 0);
+			vec3 s = vec3(0, 0, 0);
+			vec3 n = scene->obj[index]->normal(primaryRay);
+			vec3 v = normalize(scene->cam.pos - shadowRay->pos);
+			for (int i = 0; i < scene->lightCount; i++) {
+				vec3 l = normalize(scene->lights[i]->pos - shadowRay->pos);
+				shadowRay->dir = l;
 
-				int index = closest(primaryRay);
-				if (index > -1) { // when intersected
-					// blinn - phong model
-					shadowRay->pos = primaryRay->pos + primaryRay->t * primaryRay->dir;
-					shadowRay->t = -1;
-					vec3 a = vec3(0, 0, 0);
-					vec3 d = vec3(0, 0, 0);
-					vec3 s = vec3(0, 0, 0);
-					vec3 n = scene->obj[index]->normal(primaryRay);
-					vec3 v = normalize(scene->cam.pos - shadowRay->pos);
-					for (int i = 0; i < scene->lightCount; i++) {
-						vec3 l = normalize(scene->lights[i]->pos - shadowRay->pos);
-						shadowRay->dir = l;
+				vec3 la, ld, ls;
 
-						vec3 la, ld, ls;
-
-						la = scene->lights[i]->ambient;
-						if (shadow(shadowRay)) { // when covered by shadow
-							ld = vec3(0, 0, 0);
-							ls = vec3(0, 0, 0);
-						}
-						else {
-							ld = scene->lights[i]->diffuse;
-							ls = scene->lights[i]->specular;
-						}
-
-						// ambient
-						a += scene->obj[index]->ambient * la;
-						// diffuse
-						float asd = dot(l, n);
-						if (asd < 0) asd = 0;
-						d += scene->obj[index]->diffuse * ld * asd;
-						// specular
-						vec3 h = normalize(l + v);
-						float qwe = pow(dot(n, h), scene->obj[index]->shine);
-						if (qwe < 0) qwe = 0;
-						s += scene->obj[index]->specular * ls * qwe;
-					}
-
-
-					output->color = a + d + s;
-					// >1 color cutting
-					if (output->color.x > 1) output->color.x = 1;
-					if (output->color.y > 1) output->color.y = 1;
-					if (output->color.z > 1) output->color.z = 1;
-					// gamma correction
-					output->color.x = pow(output->color.x, 1 / 2.2);
-					output->color.y = pow(output->color.y, 1 / 2.2);
-					output->color.z = pow(output->color.z, 1 / 2.2);
+				la = scene->lights[i]->ambient;
+				if (shadow(shadowRay)) { // when covered by shadow
+					ld = vec3(0, 0, 0);
+					ls = vec3(0, 0, 0);
 				}
-				else output->color = vec3(0, 0, 0);
+				else {
+					ld = scene->lights[i]->diffuse;
+					ls = scene->lights[i]->specular;
+				}
 
-				scene->image->set(x, y, output->color * 255.0f);
+				// ambient
+				a += scene->obj[index]->ambient * la;
+				// diffuse
+				float asd = dot(l, n);
+				if (asd < 0) asd = 0;
+				d += scene->obj[index]->diffuse * ld * asd;
+				// specular
+				vec3 h = normalize(l + v);
+				float qwe = pow(dot(n, h), scene->obj[index]->shine);
+				if (qwe < 0) qwe = 0;
+				s += scene->obj[index]->specular * ls * qwe;
 			}
+
+			output->color = a + d + s;
+			// >1 color cutting
+			if (output->color.x > 1) output->color.x = 1;
+			if (output->color.y > 1) output->color.y = 1;
+			if (output->color.z > 1) output->color.z = 1;
+			// gamma correction
+			output->color.x = pow(output->color.x, 1 / 2.2);
+			output->color.y = pow(output->color.y, 1 / 2.2);
+			output->color.z = pow(output->color.z, 1 / 2.2);
 		}
+		else output->color = vec3(0, 0, 0);
+
 		return 0;
-	}
-
-	void test() {
-		// Draws a gradient from blue to green
-		vec3 color;
-		for (int i = 0; i < scene->image->width; i++) {
-			for (int j = 0; j < scene->image->height; j++) {
-				color = vec3(0, i / (float)scene->image->width * 255.0, j / (float)scene->image->height * 255.0);
-				scene->image->set(i, j, color);
-			}
-		}
 	}
 };

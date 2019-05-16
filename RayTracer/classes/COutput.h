@@ -1,4 +1,4 @@
-/** Dane przekazywane w procedurze rekurencyjnej
+/** Class to store data while recurence
  */
 class COutput {
 public:

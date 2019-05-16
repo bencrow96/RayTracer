@@ -1,8 +1,8 @@
-/** Klasa opisujaca promien
+/** Ray class
  */
 class CRay {
 public:
-	vec3 pos; // pozycja startowa
-	vec3 dir; // kierunek
-	float t;
+	vec3 pos; // start position
+	vec3 dir; // direction
+	float t; // distance from start to intersection
 };

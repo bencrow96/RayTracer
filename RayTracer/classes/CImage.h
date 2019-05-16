@@ -1,11 +1,11 @@
-/** Klasa reprezentujaca obraz wyjsciowy
+/** Image class
  */
 class CImage {
 public:
 	FIBITMAP* bitmap;
-	RGBQUAD data; /**< dane obrazu */
-	int width; /**< liczba pikseli w poziomie */
-	int height; /**< liczba pikseli w pionie */
+	RGBQUAD data;
+	int width;
+	int height;
 
 	CImage(int fwidth = 800, int fheight = 600) {
 		width = fwidth;
@@ -23,8 +23,8 @@ public:
 		FreeImage_SetPixelColor(bitmap, i, j, &data);
 	}
 
-	/** Zapisanie obrazu w pliku dyskowym
-	 *	@param fname - nazwa pliku
+	/** Save image
+	 *	@param fname - file name
 	 */
 	void save(const char* fname) {
 		if (FreeImage_Save(FIF_PNG, bitmap, fname, 0))
