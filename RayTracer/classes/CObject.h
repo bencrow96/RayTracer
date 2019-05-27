@@ -14,6 +14,9 @@ public:
 	vec3 specular;
 	float shine;
 	float reflecting;
+	CImage *tex;
+	string texture = "";
+	float transparent = 0.0f;
 
 	CObject() {
 	}
@@ -26,7 +29,9 @@ public:
 	virtual vec3 normal(CRay *ray) {
 		return vec3(NULL);
 	}
-
+	virtual vec3 texColor(vec3 hitPos) {
+		return vec3(NULL);
+	}
 };
 
 /** Sphere class
@@ -36,7 +41,7 @@ public:
 	float r; /**< radius */
 	vec3 o; /**< center point position */
 
-	CSphere(float sR, vec3 sO, float sReflecting, vec3 sAmbient, vec3 sDiffuse, vec3 sSpecular, float sShine) {
+	CSphere(float sR, vec3 sO, float sReflecting, vec3 sAmbient, vec3 sDiffuse, vec3 sSpecular, float sShine, float sTransparent, string sTexture) {
 		type = OBJ_SPHERE;
 		r = sR;
 		o = sO;
@@ -45,6 +50,15 @@ public:
 		diffuse = sDiffuse;
 		specular = sSpecular;
 		shine = sShine;
+		transparent = sTransparent;
+		if (sTexture.length() > 0) {
+			tex = new CImage;
+			texture = sTexture;
+			FREE_IMAGE_FORMAT ftype = FreeImage_GetFileType(texture.c_str(), 0);
+			tex->bitmap = FreeImage_Load(ftype, texture.c_str());
+			tex->width = FreeImage_GetWidth(tex->bitmap);
+			tex->height = FreeImage_GetHeight(tex->bitmap);
+		}
 	}
 
 	/** Sphere intersection computing */
@@ -85,6 +99,18 @@ public:
 	// returns normal vector of Sphere
 	vec3 normal(CRay *ray) { 
 		return normalize((ray->pos + ray->t * ray->dir) - o);
+	}
+	// returns color of texture texel
+	vec3 texColor(vec3 hitPos) {
+		if (texture.length() > 0) {
+			hitPos -= o;
+			float s = acos(hitPos.z / (float)r) / PI;
+			float t = acos(hitPos.x / ((float)r * sin(PI * s))) / PI;
+			int i = floor(abs(1.0f - s) * tex->width);
+			int j = floor(t * tex->height);
+			return tex->get(i, j)/255.0f;
+		}
+		return vec3(0, 0, 0);
 	}
 };
 
