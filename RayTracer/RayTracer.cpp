@@ -5,6 +5,8 @@
 #include <vector>
 
 #include "glm/glm.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
+#include "glm/gtx/intersect.hpp"
 #include "FreeImage/FreeImage.h"
 using namespace glm;
 using namespace std;
