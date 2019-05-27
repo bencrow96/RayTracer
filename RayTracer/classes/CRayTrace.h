@@ -17,18 +17,18 @@ public:
 
 	int init() {
 		vec3 look, u, v, o;
-		float radian = scene->cam.fov * 3.1416 / 180;
+		float radian = scene->cam.fov * PI / 180.0f;
 		look = scene->cam.dir - scene->cam.pos;
 		u = normalize(cross(scene->cam.up, look));
 		v = normalize(cross(look, u));
-		o = normalize(look) * (scene->cam.width / (2 * tan(radian / 2))) - (float)(scene->cam.width / 2) * u - (float)(scene->cam.height / 2) * v;
+		o = normalize(look) * (scene->cam.width / (2 * tan(radian / 2.0f))) - (scene->cam.width / 2.0f) * u - (scene->cam.height / 2.0f) * v;
 
 		for (int y = 0; y < scene->cam.height; y++) {
 			for (int x = 0; x < scene->cam.width; x++) {
 				primaryRay->pos = scene->cam.pos;
 				primaryRay->dir = normalize(mat3(u, v, o) * vec3(x, y, 1));
-
-				float amount = 0.001f;
+				// Supersampling
+				float amount = 0.0005f;
 				if (scene->superSampling) {
 					rayTrace(primaryRay, output);
 					vec3 color = output->color;
@@ -125,9 +125,10 @@ public:
 	/** Sending ray
 	*/
 	int rayTrace(CRay *ray, COutput *output) {
+		vec3 hitPos;
 		int index = closest(ray);
 		if (index > -1) { // when intersected
-			vec3 hitPos = ray->pos + ray->t * ray->dir;
+			hitPos = ray->pos + ray->t * ray->dir;
 			vec3 n = scene->obj[index]->normal(ray); // normal vector
 			// shadow
 			CRay *shadowRay = new CRay;
@@ -155,10 +156,15 @@ public:
 
 				// ambient
 				a += scene->obj[index]->ambient * la;
-				// diffuse
-				float asd = dot(shadowRay->dir, n);
-				if (asd < 0) asd = 0;
-				d += scene->obj[index]->diffuse * ld * asd;
+				// diffuse / texture
+				if (scene->obj[index]->texture.length() > 0) {
+					d = scene->obj[index]->texColor(hitPos);
+				}
+				else {
+					float asd = dot(shadowRay->dir, n);
+					if (asd < 0) asd = 0;
+					d += scene->obj[index]->diffuse * ld * asd;
+				}
 				// specular
 				vec3 h = normalize(shadowRay->dir - ray->dir);
 				float qwe = pow(dot(n, h), scene->obj[index]->shine);

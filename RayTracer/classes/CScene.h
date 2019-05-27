@@ -116,7 +116,9 @@ public:
 				float sy = atof(arguments.at(13).c_str());
 				float sz = atof(arguments.at(14).c_str());
 				float sh = atof(arguments.at(15).c_str());
-				CObject *sphere = new CSphere(r, vec3(ox, oy, oz), ref, vec3(ax, ay, az), vec3(dx, dy, dz), vec3(sx, sy, sz), sh);
+				float tr = atof(arguments.at(16).c_str());
+				string tex = arguments.at(17);
+				CObject *sphere = new CSphere(r, vec3(ox, oy, oz), ref, vec3(ax, ay, az), vec3(dx, dy, dz), vec3(sx, sy, sz), sh, tr, tex);
 				obj[objCount++] = sphere;
 			}
 			else if (arguments.at(0) == "triangle") {
