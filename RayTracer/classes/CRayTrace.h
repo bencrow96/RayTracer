@@ -18,7 +18,7 @@ public:
 	int init() {
 		vec3 look, u, v, o;
 		float radian = scene->cam.fov * 3.1416 / 180;
-		look = scene->cam.target - scene->cam.pos;
+		look = scene->cam.dir - scene->cam.pos;
 		u = normalize(cross(scene->cam.up, look));
 		v = normalize(cross(look, u));
 		o = normalize(look) * (scene->cam.width / (2 * tan(radian / 2))) - (float)(scene->cam.width / 2) * u - (float)(scene->cam.height / 2) * v;
@@ -28,16 +28,65 @@ public:
 				primaryRay->pos = scene->cam.pos;
 				primaryRay->dir = normalize(mat3(u, v, o) * vec3(x, y, 1));
 
-				rayTrace(primaryRay, output); 
+				float amount = 0.001f;
+				if (scene->superSampling) {
+					rayTrace(primaryRay, output);
+					vec3 color = output->color;
+					for (int i = 1; i < 9; i++) {
+						switch (i) {
+						case 1: 
+							primaryRay->dir.x -= amount;
+							primaryRay->dir.y += amount;
+							break;
+						case 2:
+							primaryRay->dir.y += amount;
+							break;
+						case 3:
+							primaryRay->dir.x += amount;
+							primaryRay->dir.y += amount;
+							break;
+						case 4:
+							primaryRay->dir.x -= amount;
+							break;
+						case 5:
+							primaryRay->dir.x += amount;
+							break;
+						case 6:
+							primaryRay->dir.x -= amount;
+							primaryRay->dir.y -= amount;
+							break;
+						case 7:
+							primaryRay->dir.y -= amount;
+							break;
+						case 8:
+							primaryRay->dir.x += amount;
+							primaryRay->dir.y -= amount;
+							break;
+						}
+						rayTrace(primaryRay, output);
+						color += output->color;
+						// reset
+						output->energy = 1.0f;
+						output->tree = 0;
+						output->color = vec3(0, 0, 0);
+						primaryRay->dir = normalize(mat3(u, v, o) * vec3(x, y, 1));
+					}
+					output->color = color / 9.0f;
+					
+				}
+				else rayTrace(primaryRay, output); 
 
 				// >1 color cutting
 				if (output->color.x > 1) output->color.x = 1;
 				if (output->color.y > 1) output->color.y = 1;
 				if (output->color.z > 1) output->color.z = 1;
 				// gamma correction
-				output->color.x = pow(output->color.x, 1 / 2.2);
-				output->color.y = pow(output->color.y, 1 / 2.2);
-				output->color.z = pow(output->color.z, 1 / 2.2);
+				if (output->color.x < 0.00304f) output->color.x *= 12.92f;
+				else output->color.x = 1.055f * pow(output->color.x, 1.0f / 2.2f) - 0.055f;
+				if (output->color.y < 0.00304f) output->color.y *= 12.92f;
+				else output->color.y = 1.055f * pow(output->color.y, 1.0f / 2.2f) - 0.055f;
+				if (output->color.z < 0.00304f) output->color.z *= 12.92f;
+				else output->color.z = 1.055f * pow(output->color.z, 1.0f / 2.2f) - 0.055f;
 
 				scene->image->set(x, y, output->color * 255.0f);
 

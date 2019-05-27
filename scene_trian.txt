@@ -19,12 +19,12 @@ cam_lookp 0 0 0
 cam_up 0 1 0 
 
 % sphere promien srodek_x srodek_y srodek_z reflect amb_r amb_g amb_b diff_r diff_b diff_b spec_r spec_g spec_b shininess
-sphere 2 0 0 0  0  0.01 0.01 0.01   0.8 0.01 0.01   0.8 0.8 0.8 20
-sphere 1 2 2 0  0  0.01 0.01 0.01   0.01 0.8 0.01   0.01 0.01 0.01 20
+sphere 2 0 0 0  0  0.01 0.01 0.01   0.8 0.01 0.01   0.8 0.8 0.8 50
+sphere 1 2 2 0  0  0.01 0.01 0.01   0.01 0.8 0.01   0.01 0.01 0.01 50
 
 % triangle p0x p0y p0z p1x p1y p1z p2x p2y p2z reflect amb_r amb_g amb_b diff_r diff_b diff_b spec_r spec_g spec_b shininess
-triangle -5 -4 -5  -5 -4 5   5 -4 5  1  0.01 0.01 0.01   0.01 0.01 0.6   0.01 0.01 0.01 20    
-triangle  5 -4 5  5 -4 -5  -5 -4 -5  1  0.01 0.01 0.01   0.01 0.01 0.6   0.01 0.01 0.01 20 
+triangle -5 -4 -5  -5 -4 5   5 -4 5  1  0.01 0.01 0.01   0.01 0.01 0.6   0.01 0.01 0.01 50    
+triangle  5 -4 5  5 -4 -5  -5 -4 -5  1  0.01 0.01 0.01   0.01 0.01 0.6   0.01 0.01 0.01 50 
 
 % light pos_x pos_y pos_z amb_r amb_g amb_b diff_r diff_b diff_b spec_r spec_g spec_b
 light -4 4 -2    1 1 1   1 1 1  1 1 1

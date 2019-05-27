@@ -23,6 +23,12 @@ public:
 		FreeImage_SetPixelColor(bitmap, i, j, &data);
 	}
 
+	vec3 get(int i, int j) {
+		RGBQUAD color;
+		FreeImage_GetPixelColor(bitmap, i, j, &color);
+		return vec3(color.rgbRed, color.rgbGreen, color.rgbBlue);
+	}
+
 	/** Save image
 	 *	@param fname - file name
 	 */
