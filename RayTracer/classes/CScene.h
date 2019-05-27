@@ -4,6 +4,7 @@ class CScene {
 public:
 	CImage *image;
 	CCamera cam;
+	bool superSampling = false;
 
 	CObject* obj[200]; /**< list of objects */
 	int objCount = 0;
@@ -91,7 +92,7 @@ public:
 				float x = atof(arguments.at(1).c_str());
 				float y = atof(arguments.at(2).c_str());
 				float z = atof(arguments.at(3).c_str());
-				cam.target = vec3(x, y, z);
+				cam.dir = vec3(x, y, z);
 			}
 			else if (arguments.at(0) == "cam_up") {
 				float x = atof(arguments.at(1).c_str());
@@ -157,6 +158,9 @@ public:
 				float sz = atof(arguments.at(12).c_str());
 				CLight *light = new CLight(vec3(ox, oy, oz), vec3(ax, ay, az), vec3(dx, dy, dz), vec3(sx, sy, sz));
 				lights[lightCount++] = light;
+			}
+			else if (arguments.at(0) == "superSampling") {
+				if (arguments.at(1) == "true") superSampling = true;
 			}
 		}
 		image = new CImage(cam.width, cam.height);
