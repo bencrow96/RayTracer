@@ -52,23 +52,30 @@ public:
 		float a, b, c, delta, x0, x1, x2;
 		vec3 v = ray->pos - o;
 		a = ray->dir.x * ray->dir.x + ray->dir.y * ray->dir.y + ray->dir.z * ray->dir.z;
-		b = 2 * (v.x * ray->dir.x + v.y * ray->dir.y + v.z * ray->dir.z);
+		b = 2.0f * (v.x * ray->dir.x + v.y * ray->dir.y + v.z * ray->dir.z);
 		c = v.x * v.x + v.y * v.y + v.z * v.z - r * r;
-		delta = b * b - 4 * a * c;
+		delta = b * b - 4.0f * a * c;
 		if (delta > 0) {
-			x1 = (-b - sqrt(delta)) / (float)(2 * a);
-			x2 = (-b + sqrt(delta)) / (float)(2 * a);
-			if (x1 < x2 && x1 > 0) ray->t = x1;
-			else ray->t = x2;
+			x1 = (-b - sqrt(delta)) / (2.0f * a);
+			x2 = (-b + sqrt(delta)) / (2.0f * a);
+			if (x1 <= x2 && x1 > 0) ray->t = x1;
+			else if(x2 > 0) ray->t = x2;
+			else {
+				ray->t = INFINITY;
+				return 0;
+			}
 			return 2;
 		}
 		else if (delta == 0) {
-			x0 = -b / (float)(2 * a);
+			x0 = -b / (2.0f * a);
 			if (x0 > 0) {
 				ray->t = x0;
 				return 1;
 			}
-			return 0;
+			else {
+				ray->t = INFINITY;
+				return 0;
+			}
 		}
 		else if (delta < 0) {
 			ray->t = INFINITY;
@@ -118,7 +125,7 @@ public:
 		float dot11 = dot(v1, v1);
 		float dot12 = dot(v1, v2);
 
-		float invDenom = 1 / (dot00*dot11 - dot01*dot01);
+		float invDenom = 1.0f / (dot00*dot11 - dot01*dot01);
 		float bu = (dot11*dot02 - dot01*dot12) * invDenom;
 		float bv = (dot00*dot12 - dot01*dot02) * invDenom;
 

@@ -27,11 +27,24 @@ public:
 			for (int x = 0; x < scene->cam.width; x++) {
 				primaryRay->pos = scene->cam.pos;
 				primaryRay->dir = normalize(mat3(u, v, o) * vec3(x, y, 1));
-				primaryRay->t = -1;
 
 				rayTrace(primaryRay, output); 
 
+				// >1 color cutting
+				if (output->color.x > 1) output->color.x = 1;
+				if (output->color.y > 1) output->color.y = 1;
+				if (output->color.z > 1) output->color.z = 1;
+				// gamma correction
+				output->color.x = pow(output->color.x, 1 / 2.2);
+				output->color.y = pow(output->color.y, 1 / 2.2);
+				output->color.z = pow(output->color.z, 1 / 2.2);
+
 				scene->image->set(x, y, output->color * 255.0f);
+
+				// reset output
+				output->energy = 1.0f;
+				output->tree = 0;
+				output->color = vec3(0, 0, 0);
 			}
 		}
 
@@ -63,21 +76,21 @@ public:
 	/** Sending ray
 	*/
 	int rayTrace(CRay *ray, COutput *output) {
-		CRay *shadowRay = new CRay;
-
-		int index = closest(primaryRay);
+		int index = closest(ray);
 		if (index > -1) { // when intersected
+			vec3 hitPos = ray->pos + ray->t * ray->dir;
+			vec3 n = scene->obj[index]->normal(ray); // normal vector
+			// shadow
+			CRay *shadowRay = new CRay;
+			shadowRay->pos = hitPos;
 			// blinn - phong model
-			shadowRay->pos = primaryRay->pos + primaryRay->t * primaryRay->dir;
-			shadowRay->t = -1;
 			vec3 a = vec3(0, 0, 0);
 			vec3 d = vec3(0, 0, 0);
 			vec3 s = vec3(0, 0, 0);
-			vec3 n = scene->obj[index]->normal(primaryRay);
-			vec3 v = normalize(scene->cam.pos - shadowRay->pos);
+			//vec3 v = normalize(ray->pos - shadowRay->pos); // v = -ray->dir
 			for (int i = 0; i < scene->lightCount; i++) {
-				vec3 l = normalize(scene->lights[i]->pos - shadowRay->pos);
-				shadowRay->dir = l;
+				shadowRay->dir = normalize(scene->lights[i]->pos - shadowRay->pos);
+				shadowRay->pos += shadowRay->dir * 0.01f; // move ray from the surface to avoid hitting it
 
 				vec3 la, ld, ls;
 
@@ -94,27 +107,37 @@ public:
 				// ambient
 				a += scene->obj[index]->ambient * la;
 				// diffuse
-				float asd = dot(l, n);
+				float asd = dot(shadowRay->dir, n);
 				if (asd < 0) asd = 0;
 				d += scene->obj[index]->diffuse * ld * asd;
 				// specular
-				vec3 h = normalize(l + v);
+				vec3 h = normalize(shadowRay->dir - ray->dir);
 				float qwe = pow(dot(n, h), scene->obj[index]->shine);
 				if (qwe < 0) qwe = 0;
 				s += scene->obj[index]->specular * ls * qwe;
 			}
 
-			output->color = a + d + s;
-			// >1 color cutting
-			if (output->color.x > 1) output->color.x = 1;
-			if (output->color.y > 1) output->color.y = 1;
-			if (output->color.z > 1) output->color.z = 1;
-			// gamma correction
-			output->color.x = pow(output->color.x, 1 / 2.2);
-			output->color.y = pow(output->color.y, 1 / 2.2);
-			output->color.z = pow(output->color.z, 1 / 2.2);
+			output->color += (a + d + s) * output->energy;
+
+			// reflections
+			if (scene->obj[index]->reflecting && output->tree < 1) {
+				output->energy *= 0.8f;
+				CRay *reflectRay = new CRay;
+				reflectRay->pos = hitPos;
+				reflectRay->dir = normalize(ray->dir - (2.0f * ray->dir * n) * n);
+				reflectRay->pos += reflectRay->dir * 0.01f;
+
+				output->tree++;
+				rayTrace(reflectRay, output);
+
+				//clean
+				delete reflectRay;
+			}
+
+			// clean
+			delete shadowRay;
 		}
-		else output->color = vec3(0, 0, 0);
+		else output->color += vec3(0, 0, 0);
 
 		return 0;
 	}
