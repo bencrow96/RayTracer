@@ -157,12 +157,12 @@ public:
 				// ambient
 				a += scene->obj[index]->ambient * la;
 				// diffuse / texture
+				float asd = dot(shadowRay->dir, n);
+				if (asd < 0) asd = 0;
 				if (scene->obj[index]->texture.length() > 0) {
-					d = scene->obj[index]->texColor(hitPos);
+					d += scene->obj[index]->texColor(hitPos) * ld * asd;
 				}
 				else {
-					float asd = dot(shadowRay->dir, n);
-					if (asd < 0) asd = 0;
 					d += scene->obj[index]->diffuse * ld * asd;
 				}
 				// specular

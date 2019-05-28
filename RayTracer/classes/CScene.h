@@ -117,7 +117,10 @@ public:
 				float sz = atof(arguments.at(14).c_str());
 				float sh = atof(arguments.at(15).c_str());
 				float tr = atof(arguments.at(16).c_str());
-				string tex = arguments.at(17);
+				string tex = "";
+				if (arguments.size() > 17) {
+					if (arguments.at(17).length() > 0) tex = arguments.at(17);
+				}
 				CObject *sphere = new CSphere(r, vec3(ox, oy, oz), ref, vec3(ax, ay, az), vec3(dx, dy, dz), vec3(sx, sy, sz), sh, tr, tex);
 				obj[objCount++] = sphere;
 			}
