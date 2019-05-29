@@ -22,14 +22,6 @@ using namespace std;
 
 int main()
 {
-	/* texture test
-	CImage *tex = new CImage;
-	string path = "textures/pool15.png";
-	FREE_IMAGE_FORMAT ftype = FreeImage_GetFileType(path.c_str(), 0);
-	tex->bitmap = FreeImage_Load(ftype, path.c_str());
-	tex->save("../test.png");
-	return 0;
-	*/
 	CRayTrace *RayTrace = new CRayTrace;
 	int err = RayTrace->scene->parse("../scene2.txt");
 	if (!err) {

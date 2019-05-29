@@ -117,7 +117,9 @@ public:
 	}
 	bool shadow(CRay *ray) { // check if ray intersects with anything
 		for (int i = 0; i < scene->objCount; i++) {
-			if (scene->obj[i]->intersect(ray) && ray->t > 1.5)  return true;
+			if (scene->obj[i]->intersect(ray) && ray->t > 1.5 && !scene->obj[i]->transparent) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -157,12 +159,12 @@ public:
 				// ambient
 				a += scene->obj[index]->ambient * la;
 				// diffuse / texture
+				float asd = dot(shadowRay->dir, n);
+				if (asd < 0) asd = 0;
 				if (scene->obj[index]->texture.length() > 0) {
-					d = scene->obj[index]->texColor(hitPos);
+					d += scene->obj[index]->texColor(hitPos) * ld * asd;
 				}
 				else {
-					float asd = dot(shadowRay->dir, n);
-					if (asd < 0) asd = 0;
 					d += scene->obj[index]->diffuse * ld * asd;
 				}
 				// specular
@@ -176,17 +178,26 @@ public:
 
 			// reflections
 			if (scene->obj[index]->reflecting && output->tree < 1) {
-				output->energy *= 0.8f;
+				output->energy *= 1.1f;
 				CRay *reflectRay = new CRay;
 				reflectRay->pos = hitPos;
 				reflectRay->dir = normalize(ray->dir - (2.0f * ray->dir * n) * n);
-				reflectRay->pos += reflectRay->dir * 0.01f;
 
 				output->tree++;
 				rayTrace(reflectRay, output);
 
 				//clean
 				delete reflectRay;
+			}
+
+			// transparency
+			if (scene->obj[index]->transparent) {
+				float factor = 1.1f;
+				bool reverse = false;
+				CRay *transparentRay = scene->obj[index]->transRay(hitPos, ray, factor, reverse);
+
+				output->energy *= scene->obj[index]->transparent;
+				rayTrace(transparentRay, output);
 			}
 
 			// clean
