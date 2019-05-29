@@ -145,7 +145,8 @@ public:
 				float sy = atof(arguments.at(18).c_str());
 				float sz = atof(arguments.at(19).c_str());
 				float sh = atof(arguments.at(20).c_str());
-				CObject *triangle = new CTriangle(vec3(p0x,p0y,p0z), vec3(p1x,p1y,p1z), vec3(p2x,p2y,p2z), ref, vec3(ax, ay, az), vec3(dx, dy, dz), vec3(sx, sy, sz), sh);
+				float tr = atof(arguments.at(21).c_str());
+				CObject *triangle = new CTriangle(vec3(p0x,p0y,p0z), vec3(p1x,p1y,p1z), vec3(p2x,p2y,p2z), ref, vec3(ax, ay, az), vec3(dx, dy, dz), vec3(sx, sy, sz), sh, tr);
 				obj[objCount++] = triangle;
 			}
 			else if (arguments.at(0) == "light") {

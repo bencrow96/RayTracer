@@ -117,7 +117,9 @@ public:
 	}
 	bool shadow(CRay *ray) { // check if ray intersects with anything
 		for (int i = 0; i < scene->objCount; i++) {
-			if (scene->obj[i]->intersect(ray) && ray->t > 1.5)  return true;
+			if (scene->obj[i]->intersect(ray) && ray->t > 1.5 && !scene->obj[i]->transparent) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -176,17 +178,26 @@ public:
 
 			// reflections
 			if (scene->obj[index]->reflecting && output->tree < 1) {
-				output->energy *= 0.8f;
+				output->energy *= 1.1f;
 				CRay *reflectRay = new CRay;
 				reflectRay->pos = hitPos;
 				reflectRay->dir = normalize(ray->dir - (2.0f * ray->dir * n) * n);
-				reflectRay->pos += reflectRay->dir * 0.01f;
 
 				output->tree++;
 				rayTrace(reflectRay, output);
 
 				//clean
 				delete reflectRay;
+			}
+
+			// transparency
+			if (scene->obj[index]->transparent) {
+				float factor = 1.1f;
+				bool reverse = false;
+				CRay *transparentRay = scene->obj[index]->transRay(hitPos, ray, factor, reverse);
+
+				output->energy *= scene->obj[index]->transparent;
+				rayTrace(transparentRay, output);
 			}
 
 			// clean

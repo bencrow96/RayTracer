@@ -14,8 +14,8 @@ c:\users\daer\desktop\raytracer\raytracer\classes\cimage.h(21): warning C4244: "
           [
               T=float
           ]
-c:\users\daer\desktop\raytracer\raytracer\classes\cobject.h(109): warning C4244: "inicjowanie": konwersja z "float" do "int", możliwa utrata danych
-c:\users\daer\desktop\raytracer\raytracer\classes\cobject.h(110): warning C4244: "inicjowanie": konwersja z "float" do "int", możliwa utrata danych
+c:\users\daer\desktop\raytracer\raytracer\classes\cobject.h(113): warning C4244: "inicjowanie": konwersja z "float" do "int", możliwa utrata danych
+c:\users\daer\desktop\raytracer\raytracer\classes\cobject.h(114): warning C4244: "inicjowanie": konwersja z "float" do "int", możliwa utrata danych
 c:\users\daer\desktop\raytracer\raytracer\classes\cscene.h(77): warning C4244: "=": konwersja z "double" do "int", możliwa utrata danych
 c:\users\daer\desktop\raytracer\raytracer\classes\cscene.h(80): warning C4244: "=": konwersja z "double" do "int", możliwa utrata danych
 c:\users\daer\desktop\raytracer\raytracer\classes\cscene.h(83): warning C4244: "=": konwersja z "double" do "int", możliwa utrata danych
@@ -64,7 +64,7 @@ c:\users\daer\desktop\raytracer\raytracer\classes\cscene.h(144): warning C4244: 
 c:\users\daer\desktop\raytracer\raytracer\classes\cscene.h(145): warning C4244: "inicjowanie": konwersja z "double" do "float", możliwa utrata danych
 c:\users\daer\desktop\raytracer\raytracer\classes\cscene.h(146): warning C4244: "inicjowanie": konwersja z "double" do "float", możliwa utrata danych
 c:\users\daer\desktop\raytracer\raytracer\classes\cscene.h(147): warning C4244: "inicjowanie": konwersja z "double" do "float", możliwa utrata danych
-c:\users\daer\desktop\raytracer\raytracer\classes\cscene.h(152): warning C4244: "inicjowanie": konwersja z "double" do "float", możliwa utrata danych
+c:\users\daer\desktop\raytracer\raytracer\classes\cscene.h(148): warning C4244: "inicjowanie": konwersja z "double" do "float", możliwa utrata danych
 c:\users\daer\desktop\raytracer\raytracer\classes\cscene.h(153): warning C4244: "inicjowanie": konwersja z "double" do "float", możliwa utrata danych
 c:\users\daer\desktop\raytracer\raytracer\classes\cscene.h(154): warning C4244: "inicjowanie": konwersja z "double" do "float", możliwa utrata danych
 c:\users\daer\desktop\raytracer\raytracer\classes\cscene.h(155): warning C4244: "inicjowanie": konwersja z "double" do "float", możliwa utrata danych
@@ -76,5 +76,6 @@ c:\users\daer\desktop\raytracer\raytracer\classes\cscene.h(160): warning C4244: 
 c:\users\daer\desktop\raytracer\raytracer\classes\cscene.h(161): warning C4244: "inicjowanie": konwersja z "double" do "float", możliwa utrata danych
 c:\users\daer\desktop\raytracer\raytracer\classes\cscene.h(162): warning C4244: "inicjowanie": konwersja z "double" do "float", możliwa utrata danych
 c:\users\daer\desktop\raytracer\raytracer\classes\cscene.h(163): warning C4244: "inicjowanie": konwersja z "double" do "float", możliwa utrata danych
-c:\users\daer\desktop\raytracer\raytracer\classes\cobject.h(98): warning C4715: "CSphere::intersect”: niewszystkie ścieżki kodu zwracają wartość
+c:\users\daer\desktop\raytracer\raytracer\classes\cscene.h(164): warning C4244: "inicjowanie": konwersja z "double" do "float", możliwa utrata danych
+c:\users\daer\desktop\raytracer\raytracer\classes\cobject.h(102): warning C4715: "CSphere::intersect”: niewszystkie ścieżki kodu zwracają wartość
   RayTracer.vcxproj -> C:\Users\daer\Desktop\RayTracer\Debug\RayTracer.exe

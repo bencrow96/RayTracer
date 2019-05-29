@@ -29,8 +29,12 @@ public:
 	virtual vec3 normal(CRay *ray) {
 		return vec3(NULL);
 	}
+	// texture color computing
 	virtual vec3 texColor(vec3 hitPos) {
 		return vec3(NULL);
+	}
+	virtual CRay* transRay(vec3 hitPos, CRay *ray, float factor, bool reverse) {
+		return NULL;
 	}
 };
 
@@ -112,6 +116,27 @@ public:
 		}
 		return vec3(0, 0, 0);
 	}
+	// returns transparent Ray
+	CRay* transRay(vec3 hitPos, CRay *ray, float factor, bool reverse) {
+		CRay *transparentRay = new CRay;
+		vec3 centerDir = normalize(hitPos - o);
+
+		if (reverse) {
+			factor *= 0.7f;
+			transparentRay->pos = hitPos + r * 2.0f * centerDir * -1.0f;
+			transparentRay->pos += centerDir * -1.0f * 0.01f;
+		}
+		else {
+			transparentRay->pos = hitPos + r * 2.0f * ray->dir;
+			transparentRay->pos += ray->dir * 0.01f;
+		}
+
+		transparentRay->dir.x = (ray->dir.x*factor - centerDir.x*(1.0f - factor)) / 2.0f;
+		transparentRay->dir.y = (ray->dir.y*factor - centerDir.y*(1.0f - factor)) / 2.0f;
+		transparentRay->dir.z = (ray->dir.z*factor - centerDir.z*(1.0f - factor)) / 2.0f;
+
+		return transparentRay;
+	}
 };
 
 /** Triangle class
@@ -122,7 +147,7 @@ public:
 	vec3 p1;
 	vec3 p2;
 
-	CTriangle(vec3 tP0, vec3 tP1, vec3 tP2, float tReflecting, vec3 tAmbient, vec3 tDiffuse, vec3 tSpecular, float tShine) {
+	CTriangle(vec3 tP0, vec3 tP1, vec3 tP2, float tReflecting, vec3 tAmbient, vec3 tDiffuse, vec3 tSpecular, float tShine, float tTransparent) {
 		type = OBJ_TRIANGLE;
 		p0 = tP0;
 		p1 = tP1;
@@ -132,6 +157,7 @@ public:
 		diffuse = tDiffuse;
 		specular = tSpecular;
 		shine = tShine;
+		transparent = tTransparent;
 	}
 
 	/** Triangle intersection computing */
@@ -170,6 +196,14 @@ public:
 		n.y = u.z*v.x - u.x*v.z;
 		n.z = u.x*v.y - u.y*v.x;
 		return normalize(n);
+	}
+
+	CRay* transRay(vec3 hitPos, CRay *ray, float factor, bool reverse) {
+		CRay *transparentRay = new CRay;
+		transparentRay->pos = hitPos + ray->dir * 0.01f;
+		transparentRay->dir = ray->dir;
+
+		return transparentRay;
 	}
 };
 
