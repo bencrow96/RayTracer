@@ -122,7 +122,7 @@ public:
 		vec3 centerDir = normalize(hitPos - o);
 
 		if (reverse) {
-			factor *= 0.7f;
+			factor *= 0.3f;
 			transparentRay->pos = hitPos + r * 2.0f * centerDir * -1.0f;
 			transparentRay->pos += centerDir * -1.0f * 0.01f;
 		}
