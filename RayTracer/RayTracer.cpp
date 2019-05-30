@@ -23,7 +23,7 @@ using namespace std;
 int main()
 {
 	CRayTrace *RayTrace = new CRayTrace;
-	int err = RayTrace->scene->parse("../scene2.txt");
+	int err = RayTrace->scene->parse("../scene3.txt");
 	if (!err) {
 		RayTrace->init();
 		RayTrace->scene->image->save("../result.png");

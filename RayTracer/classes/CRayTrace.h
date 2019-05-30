@@ -7,14 +7,15 @@ public:
 	COutput *output;
 	CScene *scene;
 
-	/** Main loop
-	 */
+	
 	CRayTrace() {
 		scene = new CScene;
 		output = new COutput;
 		primaryRay = new CRay;
 	}
 
+	/** Main loop
+	 */
 	int init() {
 		vec3 look, u, v, o;
 		float radian = scene->cam.fov * PI / 180.0f;
@@ -94,7 +95,9 @@ public:
 				output->energy = 1.0f;
 				output->tree = 0;
 				output->color = vec3(0, 0, 0);
+
 			}
+			cout << (y+1) * 100 / (float)(scene->cam.height) << "%" << endl;
 		}
 
 		return 0;
@@ -178,10 +181,11 @@ public:
 
 			// reflections
 			if (scene->obj[index]->reflecting && output->tree < 1) {
-				output->energy *= 1.1f;
+				output->energy *= 0.8f;
 				CRay *reflectRay = new CRay;
 				reflectRay->pos = hitPos;
 				reflectRay->dir = normalize(ray->dir - (2.0f * ray->dir * n) * n);
+				reflectRay->pos += reflectRay->dir * 0.01f;
 
 				output->tree++;
 				rayTrace(reflectRay, output);
@@ -192,7 +196,7 @@ public:
 
 			// transparency
 			if (scene->obj[index]->transparent) {
-				float factor = 1.1f;
+				float factor = 1.1f; // negative flips
 				bool reverse = false;
 				CRay *transparentRay = scene->obj[index]->transRay(hitPos, ray, factor, reverse);
 
